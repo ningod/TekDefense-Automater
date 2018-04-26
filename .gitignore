@@ -1,0 +1,5 @@
+/venv
+/venv3
+/venv27
+*.pyc
+.idea

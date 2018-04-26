@@ -41,6 +41,8 @@ from siteinfo import SiteFacade, Site
 from utilities import Parser, IPWrapper
 from outputs import SiteDetailOutput
 from inputs import TargetFile
+import logging
+from utilities import logger
 
 __VERSION__ = '0.21'
 __GITLOCATION__ = 'https://github.com/1aN0rmus/TekDefense-Automater'
@@ -63,9 +65,11 @@ def main():
     sites = []
     parser = Parser('IP, URL, and Hash Passive Analysis tool', __VERSION__)
 
+    if parser.verbose():
+        logger.setLevel(logging.DEBUG)
     # if no target run and print help
     if parser.hasNoTarget():
-        print '[!] No argument given.'
+        logging.error('[!] No argument given.')
         parser.print_help()  # need to fix this. Will later
         sys.exit()
 

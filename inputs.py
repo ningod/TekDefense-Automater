@@ -24,6 +24,8 @@ from outputs import SiteDetailOutput
 from requests.exceptions import ConnectionError
 from requests.exceptions import HTTPError
 from xml.etree.ElementTree import ElementTree
+import logging
+from utilities import logger
 
 __REMOTE_TEKD_XML_LOCATION__ = 'https://raw.githubusercontent.com/1aN0rmus/TekDefense-Automater/master/tekdefense.xml'
 __TEKDEFENSEXML__ = 'tekdefense.xml'
