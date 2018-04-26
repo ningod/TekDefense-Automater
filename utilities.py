@@ -19,6 +19,10 @@ import re
 import os
 import hashlib
 import requests
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger()
 
 class Parser(object):
     """

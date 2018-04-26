@@ -21,6 +21,7 @@ import re
 from datetime import datetime
 from operator import attrgetter
 import sys
+from utilities import logger
 
 class SiteDetailOutput(object):
     """
@@ -82,15 +83,25 @@ class SiteDetailOutput(object):
         Restriction(s):
         The Method has no restrictions.
         """
-        self.PrintToScreen(parser.hasBotOut())
+
         if parser.hasCEFOutFile():
+            if parser.verbose():
+                self.PrintToScreen(parser.hasBotOut())
             self.PrintToCEFFile(parser.CEFOutFile)
-        if parser.hasTextOutFile():
+        elif parser.hasTextOutFile():
+            if parser.verbose():
+                self.PrintToScreen(parser.hasBotOut())
             self.PrintToTextFile(parser.TextOutFile)
-        if parser.hasHTMLOutFile():
+        elif parser.hasHTMLOutFile():
+            if parser.verbose():
+                self.PrintToScreen(parser.hasBotOut())
             self.PrintToHTMLFile(parser.HTMLOutFile)
-        if parser.hasCSVOutSet():
+        elif parser.hasCSVOutSet():
+            if parser.verbose():
+                self.PrintToScreen(parser.hasBotOut())
             self.PrintToCSVFile(parser.CSVOutFile)
+        else:
+            self.PrintToScreen(parser.hasBotOut())
 
     def PrintToScreen(self, printinbotformat):
         """
@@ -134,7 +145,7 @@ class SiteDetailOutput(object):
                     for index in range(len(site.RegEx)):  # the regexs will ensure we have the exact number of lookups
                         siteimpprop = site.getImportantProperty(index)
                         if target != site.Target:
-                            print "\n**_ Results found for: " + site.Target + " _**"
+                            logger.info("\n**_ Results found for: " + site.Target + " _**")
                             target = site.Target
                             # Check for them ALL to be None or 0 length
                         sourceurlhasnoreturn = True
@@ -144,48 +155,48 @@ class SiteDetailOutput(object):
                                     sourceurlhasnoreturn = False
 
                         if sourceurlhasnoreturn:
-                            print '[+] ' + site.SourceURL + ' No results found'
+                            logger.info('[+] ' + site.SourceURL + ' No results found')
                             break
                         else:
                             if siteimpprop is None or len(siteimpprop) == 0:
-                                print "No results in the " + site.FriendlyName[index] + " category"
+                                logger.info( "No results in the " + site.FriendlyName[index] + " category" )
                             else:
                                 if siteimpprop[index] is None or len(siteimpprop[index]) == 0:
-                                    print site.ReportStringForResult[index] + ' No results found'
+                                    logger.info( site.ReportStringForResult[index] + ' No results found' )
                                 else:
                                     laststring = ""
                                     # if it's just a string we don't want it output like a list
                                     if isinstance(siteimpprop[index], basestring):
                                         if "" + site.ReportStringForResult[index] + " " + str(siteimpprop) != laststring:
-                                            print "" + site.ReportStringForResult[index] + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                            logger.info( "" + site.ReportStringForResult[index] + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                             laststring = "" + site.ReportStringForResult[index] + " " + str(siteimpprop)
                                     # must be a list since it failed the isinstance check on string
                                     else:
                                         laststring = ""
                                         for siteresult in siteimpprop[index]:
                                             if "" + site.ReportStringForResult[index] + " " + str(siteresult) != laststring:
-                                                print "" + site.ReportStringForResult[index] + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                                logger.info( "" + site.ReportStringForResult[index] + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                                 laststring = "" + site.ReportStringForResult[index] + " " + str(siteresult)
                 else:#this is a singlesite
                     siteimpprop = site.getImportantProperty(0)
                     if target != site.Target:
-                        print "\n**_ Results found for: " + site.Target + " _**"
+                        logger.info( "\n**_ Results found for: " + site.Target + " _**" )
                         target = site.Target
                     if siteimpprop is None or len(siteimpprop)==0:
-                        print '[+] ' + site.FriendlyName + ' No results found'
+                        logger.info( '[+] ' + site.FriendlyName + ' No results found' )
                     else:
                         laststring = ""
                         #if it's just a string we don't want it output like a list
                         if isinstance(siteimpprop, basestring):
                             if "" + site.ReportStringForResult + " " + str(siteimpprop) != laststring:
-                                print "" + site.ReportStringForResult + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                logger.info( "" + site.ReportStringForResult + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                 laststring = "" + site.ReportStringForResult + " " + str(siteimpprop)
                         #must be a list since it failed the isinstance check on string
                         else:
                             laststring = ""
                             for siteresult in siteimpprop:
                                 if "" + site.ReportStringForResult + " " + str(siteresult) != laststring:
-                                    print "" + site.ReportStringForResult + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                    logger.info( "" + site.ReportStringForResult + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                     laststring = "" + site.ReportStringForResult + " " + str(siteresult)
         else:
             pass
@@ -212,47 +223,47 @@ class SiteDetailOutput(object):
                     for index in range(len(site.RegEx)):  # the regexs will ensure we have the exact number of lookups
                         siteimpprop = site.getImportantProperty(index)
                         if target != site.Target:
-                            print "\n____________________     Results found for: " + site.Target + "     ____________________"
+                            logger.info( "\n____________________     Results found for: " + site.Target + "     ____________________" )
                             target = site.Target
                         if siteimpprop is None or len(siteimpprop) == 0:
-                            print "No results in the " + site.FriendlyName[index] + " category"
+                            logger.info( "No results in the " + site.FriendlyName[index] + " category" )
                         else:
                             if siteimpprop[index] is None or len(siteimpprop[index]) == 0:
-                                print site.ReportStringForResult[index] + ' No results found'
+                                logger.info( site.ReportStringForResult[index] + ' No results found' )
                             else:
                                 laststring = ""
                                 # if it's just a string we don't want it output like a list
                                 if isinstance(siteimpprop[index], basestring):
                                     if "" + site.ReportStringForResult[index] + " " + str(siteimpprop) != laststring:
-                                        print "" + site.ReportStringForResult[index] + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                        logger.info( "" + site.ReportStringForResult[index] + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                         laststring = "" + site.ReportStringForResult[index] + " " + str(siteimpprop)
                                 # must be a list since it failed the isinstance check on string
                                 else:
                                     laststring = ""
                                     for siteresult in siteimpprop[index]:
                                         if "" + site.ReportStringForResult[index] + " " + str(siteresult) != laststring:
-                                            print "" + site.ReportStringForResult[index] + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                            logger.info( "" + site.ReportStringForResult[index] + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                             laststring = "" + site.ReportStringForResult[index] + " " + str(siteresult)
                 else:  # this is a singlesite
                     siteimpprop = site.getImportantProperty(0)
                     if target != site.Target:
-                        print "\n____________________     Results found for: " + site.Target + "     ____________________"
+                        logger.info( "\n____________________     Results found for: " + site.Target + "     ____________________" )
                         target = site.Target
                     if siteimpprop is None or len(siteimpprop) == 0:
-                        print "No results found in the " + site.FriendlyName
+                        logger.info( "No results found in the " + site.FriendlyName )
                     else:
                         laststring = ""
                         # if it's just a string we don't want it output like a list
                         if isinstance(siteimpprop, basestring):
                             if "" + site.ReportStringForResult + " " + str(siteimpprop) != laststring:
-                                print "" + site.ReportStringForResult + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                logger.info( "" + site.ReportStringForResult + " " + str(siteimpprop).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                 laststring = "" + site.ReportStringForResult + " " + str(siteimpprop)
                         # must be a list since it failed the isinstance check on string
                         else:
                             laststring = ""
                             for siteresult in siteimpprop:
                                 if "" + site.ReportStringForResult + " " + str(siteresult) != laststring:
-                                    print "" + site.ReportStringForResult + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp')
+                                    logger.info( "" + site.ReportStringForResult + " " + str(siteresult).replace('www.', 'www[.]').replace('http', 'hxxp') )
                                     laststring = "" + site.ReportStringForResult + " " + str(siteresult)
         else:
             pass
@@ -291,7 +302,7 @@ class SiteDetailOutput(object):
         pattern = "^\[\+\]\s+"
         target = ""
         if cefoutfile != "-":
-            print '\n[+] Generating CEF output: ' + cefoutfile
+            logger.info( '\n[+] Generating CEF output: ' + cefoutfile )
             f = open(cefoutfile, "wb")
         else:
             f = sys.stdout
@@ -385,7 +396,7 @@ class SiteDetailOutput(object):
         if cefoutfile != "-":
             f.flush()
             f.close()
-            print "" + cefoutfile + " Generated"
+            logger.info( "" + cefoutfile + " Generated" )
 
 
     def PrintToTextFile(self,textoutfile):
@@ -405,7 +416,7 @@ class SiteDetailOutput(object):
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
         if textoutfile != "-":
-            print "\n[+] Generating text output: " + textoutfile
+            logger.info( "\n[+] Generating text output: " + textoutfile )
             f = open(textoutfile, "w")
         else:
             f = sys.stdout
@@ -459,7 +470,7 @@ class SiteDetailOutput(object):
         if textoutfile != "-":
             f.flush()
             f.close()
-            print "" + textoutfile + " Generated"
+            logger.info( "" + textoutfile + " Generated" )
 
     def PrintToCSVFile(self,csvoutfile):
         """
@@ -478,7 +489,7 @@ class SiteDetailOutput(object):
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
         if csvoutfile != "-":
-            print '\n[+] Generating CSV output: ' + csvoutfile
+            logger.info( '\n[+] Generating CSV output: ' + csvoutfile )
             f = open(csvoutfile, "wb")
         else:
             f = sys.stdout
@@ -557,7 +568,7 @@ class SiteDetailOutput(object):
         if csvoutfile != "-":
             f.flush()
             f.close()
-            print "" + csvoutfile + " Generated"
+            logger.info( "" + csvoutfile + " Generated" )
 
     def PrintToHTMLFile(self, htmloutfile):
         """
@@ -576,7 +587,7 @@ class SiteDetailOutput(object):
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
         if htmloutfile != "-":
-            print '\n[+] Generating HTML output: ' + htmloutfile
+            logger.info( '\n[+] Generating HTML output: ' + htmloutfile )
             f = open(htmloutfile, "w")
         else:
             f = sys.stdout
@@ -648,17 +659,17 @@ class SiteDetailOutput(object):
         if htmloutfile != "-":
             f.flush()
             f.close()
-            print "" + htmloutfile + " Generated"
+            logger.info( "" + htmloutfile + " Generated" )
 
     @classmethod
     def PrintStandardOutput(cls, strout, *args, **kwargs):
         if 'verbose' in kwargs.keys():
             if kwargs['verbose'] is True:
-                print strout
+                logger.info( strout )
             else:
                 return
         else:
-            print strout
+            logger.info( strout )
 
     def getHTMLOpening(self):
         """

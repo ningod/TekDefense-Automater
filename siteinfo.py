@@ -35,6 +35,7 @@ from requests.exceptions import ConnectionError
 from outputs import SiteDetailOutput
 from inputs import SitesFile
 from utilities import VersionChecker
+from utilities import logger
 
 requests.packages.urllib3.disable_warnings()
 
@@ -107,10 +108,10 @@ class SiteFacade(object):
         localsitetree = SitesFile.getXMLTree(__SITESXML__, self._verbose)
 
         if not localsitetree and not remotesitetree:
-            print 'Unfortunately there is neither a {tekd} file nor a {sites} file that can be utilized for proper' \
+            logger.info( 'Unfortunately there is neither a {tekd} file nor a {sites} file that can be utilized for proper' \
                   ' parsing.\nAt least one configuration XML file must be available for Automater to work properly.\n' \
                   'Please see {url} for further instructions.'\
-                .format(tekd=__TEKDEFENSEXML__, sites=__SITESXML__, url=versionlocation)
+                .format(tekd=__TEKDEFENSEXML__, sites=__SITESXML__, url=versionlocation) )
         else:
             if localsitetree:
                 for siteelement in localsitetree.iter(tag="site"):
@@ -123,8 +124,8 @@ class SiteFacade(object):
                                     self.buildSiteList(siteelement, webretrievedelay, proxy, targettype, target,
                                                        useragent, botoutputrequested)
                     else:
-                        print 'A problem was found in the {sites} file. There appears to be a site entry with ' \
-                              'unequal numbers of regexs and reporting requirements'.format(sites=__SITESXML__)
+                        logger.info( 'A problem was found in the {sites} file. There appears to be a site entry with ' \
+                              'unequal numbers of regexs and reporting requirements'.format(sites=__SITESXML__) )
             if remotesitetree:
                 for siteelement in remotesitetree.iter(tag="site"):
                     if self.siteEntryIsValid(siteelement):
@@ -136,8 +137,8 @@ class SiteFacade(object):
                                     self.buildSiteList(siteelement, webretrievedelay, proxy, targettype, target,
                                                        useragent, botoutputrequested)
                     else:
-                        print 'A problem was found in the {sites} file. There appears to be a site entry with ' \
-                              'unequal numbers of regexs and reporting requirements'.format(sites=__SITESXML__)
+                        logger.info( 'A problem was found in the {sites} file. There appears to be a site entry with ' \
+                              'unequal numbers of regexs and reporting requirements'.format(sites=__SITESXML__) )
 
     def getSiteInfoIfSiteTypesMatch(self, source, target, siteelement):
         if source == "allsources" or source == siteelement.get("name"):
