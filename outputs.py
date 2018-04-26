@@ -20,6 +20,7 @@ import socket
 import re
 from datetime import datetime
 from operator import attrgetter
+import sys
 
 class SiteDetailOutput(object):
     """
@@ -289,8 +290,11 @@ class SiteDetailOutput(object):
                        cef_SignatureID, cef_Severity, cef_Extension]
         pattern = "^\[\+\]\s+"
         target = ""
-        print '\n[+] Generating CEF output: ' + cefoutfile
-        f = open(cefoutfile, "wb")
+        if cefoutfile != "-":
+            print '\n[+] Generating CEF output: ' + cefoutfile
+            f = open(cefoutfile, "wb")
+        else:
+            f = sys.stdout
         csv.register_dialect('escaped', delimiter='|', escapechar='\\', doublequote=False, quoting=csv.QUOTE_NONE)
         cefRW = csv.writer(f, 'escaped')
         # cefRW.writerow(['Target', 'Type', 'Source', 'Result'])
@@ -378,10 +382,10 @@ class SiteDetailOutput(object):
                                                re.sub(pattern,"",site.ReportStringForResult)+ str(siteimpprop)] + \
                                            [cef_Severity] + [tgt])
                                     laststring = "" + tgt + typ + source + str(res)
-
-        f.flush()
-        f.close()
-        print "" + cefoutfile + " Generated"
+        if cefoutfile != "-":
+            f.flush()
+            f.close()
+            print "" + cefoutfile + " Generated"
 
 
     def PrintToTextFile(self,textoutfile):
@@ -400,8 +404,11 @@ class SiteDetailOutput(object):
         """
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
-        print "\n[+] Generating text output: " + textoutfile
-        f = open(textoutfile, "w")
+        if textoutfile != "-":
+            print "\n[+] Generating text output: " + textoutfile
+            f = open(textoutfile, "w")
+        else:
+            f = sys.stdout
         if sites is not None:
             for site in sites:
                 if not isinstance(site._regex,basestring): #this is a multisite
@@ -449,9 +456,10 @@ class SiteDetailOutput(object):
                                 if "" + site.ReportStringForResult + " " + str(siteresult) != laststring:
                                     f.write("\n" + site.ReportStringForResult + " " + str(siteresult))
                                     laststring = "" + site.ReportStringForResult + " " + str(siteresult)
-        f.flush()
-        f.close()
-        print "" + textoutfile + " Generated"
+        if textoutfile != "-":
+            f.flush()
+            f.close()
+            print "" + textoutfile + " Generated"
 
     def PrintToCSVFile(self,csvoutfile):
         """
@@ -469,8 +477,11 @@ class SiteDetailOutput(object):
         """
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
-        print '\n[+] Generating CSV output: ' + csvoutfile
-        f = open(csvoutfile, "wb")
+        if csvoutfile != "-":
+            print '\n[+] Generating CSV output: ' + csvoutfile
+            f = open(csvoutfile, "wb")
+        else:
+            f = sys.stdout
         csvRW = csv.writer(f, quoting=csv.QUOTE_ALL)
         csvRW.writerow(['Target', 'Type', 'Source', 'Result'])
         if sites is not None:
@@ -543,9 +554,10 @@ class SiteDetailOutput(object):
                                     csvRW.writerow([tgt,typ,source,res])
                                     laststring = "" + tgt + typ + source + str(res)
 
-        f.flush()
-        f.close()
-        print "" + csvoutfile + " Generated"
+        if csvoutfile != "-":
+            f.flush()
+            f.close()
+            print "" + csvoutfile + " Generated"
 
     def PrintToHTMLFile(self, htmloutfile):
         """
@@ -563,8 +575,11 @@ class SiteDetailOutput(object):
         """
         sites = sorted(self.ListOfSites, key=attrgetter('Target'))
         target = ""
-        print '\n[+] Generating HTML output: ' + htmloutfile
-        f = open(htmloutfile, "w")
+        if htmloutfile != "-":
+            print '\n[+] Generating HTML output: ' + htmloutfile
+            f = open(htmloutfile, "w")
+        else:
+            f = sys.stdout
         f.write(self.getHTMLOpening())
         if sites is not None:
             for site in sites:
@@ -630,9 +645,10 @@ class SiteDetailOutput(object):
                                 tableData = '<tr><td>' + tgt + '</td><td>' + typ + '</td><td>' + source + '</td><td>' + str(res) + '</td></tr>'
                                 f.write(tableData)
         f.write(self.getHTMLClosing())
-        f.flush()
-        f.close()
-        print "" + htmloutfile + " Generated"
+        if htmloutfile != "-":
+            f.flush()
+            f.close()
+            print "" + htmloutfile + " Generated"
 
     @classmethod
     def PrintStandardOutput(cls, strout, *args, **kwargs):
