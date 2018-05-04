@@ -1,0 +1,11 @@
+<application>
+  <component name="RemoteServers">
+    <remote-server name="Docker" type="docker">
+      <configuration>
+        <option name="apiUrl" value="https://192.168.224.129:2376" />
+        <option name="certificatesPath" value="C:\Users\svetrini\.docker\machine\machines\default" />
+        <option name="machine" value="default" />
+      </configuration>
+    </remote-server>
+  </component>
+</application>
